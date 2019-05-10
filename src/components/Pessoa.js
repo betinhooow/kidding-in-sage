@@ -49,9 +49,10 @@ export default class Pessoa extends PureComponent {
     }
 
     handleChangeSexo = e => {
+        console.log(e.target);
         this.setState({
             ...this.state,
-            pessoa: { ...this.state.pessoa, sexo: e.target.value }
+            pessoa: { ...this.state.pessoa, sexo: e.target.visibleValue }
         })
     }
 
@@ -163,7 +164,7 @@ export default class Pessoa extends PureComponent {
             rows.push(
                 <TableRow key={row.id} uniqueID={`${row.id}`}>
                     <TableCell>{row.nome}</TableCell>
-                    <TableCell>{row.cpf}</TableCell>
+                    <TableCell>{row.sexo}</TableCell>
                     <TableCell align='center'>
                         <Button style={{ borderRadius: '20px', marginRight: '10px' }} onClick={() => this.onClickView(row.id)}> <Icon type="view" /> </Button>
                         <Button style={{ borderRadius: '20px', marginRight: '10px' }} onClick={() => this.onClickEdit(row.id)}> <Icon type="edit" /> </Button>
