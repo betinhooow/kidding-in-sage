@@ -1,12 +1,8 @@
 import React from 'react';
-import Header from './components/Header';
-import Main from './components/Main';
+import Pessoa from './components/Pessoa';
 
-const App = () => (
-  <div id="layout">
-        <Header />
-        <Main />
-      </div>
-)
+function App() {
+  return <Pessoa />;
+}
 
 export default App;

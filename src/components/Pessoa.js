@@ -17,7 +17,7 @@ const initialState = {
         nome: '',
         cpf: '',
         cidade_nasc: '',
-        data_nasc: (new Date()).toLocaleDateString(),
+        data_nasc: (((new Date()).toLocaleDateString()).toString()),
         cor_favorita: '',
         endereco: '',
         sexo: '1',
@@ -30,7 +30,7 @@ const initialState = {
     modalView: false,
     modalDelete: false,
     nomeToDelete: '',
-    modalEdit: false,
+    isEdit: false,
     lastId: 1,
     idToEdit: '',
     idToDelete: '',
@@ -49,18 +49,14 @@ export default class Pessoa extends PureComponent {
     }
 
     handleChangeSexo = e => {
-        console.log(e.target);
         this.setState({
             ...this.state,
-            pessoa: { ...this.state.pessoa, sexo: e.target.Value }
+            pessoa: { ...this.state.pessoa, sexo: e.target.value }
         })
     }
 
     handleChangeDtNasc = e => {
-        this.setState({
-            ...this.state,
-            pessoa: { ...this.state.pessoa, data_nasc: e.target.value }
-        })
+        console.log("Bosta")
     }
 
     handleChangeFeliz = () => {
@@ -82,15 +78,15 @@ export default class Pessoa extends PureComponent {
     onClickEdit = (id) => {
         this.setState({
             ...this.state,
-            modalEdit: !this.state.modalEdit,
+            isEdit: true,
             pessoa: this.state.pessoas.filter(pessoa => pessoa.id === id)[0],
             idToEdit: id
         })
     }
 
-    onCancelModalEdit = () => {
+    onCancelIsEdit = () => {
         this.setState({
-            modalEdit: !this.state.modalEdit,
+            isEdit: false,
             pessoa: initialState.pessoa
         })
     }
@@ -121,28 +117,28 @@ export default class Pessoa extends PureComponent {
         })
     }
 
-    onEditPessoa = (e) => {
-        e.preventDefault();
-        this.setState({
-            ...this.state,
-            pessoas: [
-                ...this.state.pessoas.filter(pessoa => pessoa.id !== this.state.idToEdit),
-                this.state.pessoa
-            ], modalEdit: false,
-            pessoa: initialState.pessoa
-        })
-    }
-
     onSubmitPessoa = (e) => {
         e.preventDefault();
-        this.setState({
-            pessoas: [
-                ...this.state.pessoas,
-                { id: this.state.lastId + 1, ...this.state.pessoa }
-            ],
-            pessoa: { ...initialState.pessoa },
-            lastId: this.state.lastId + 1
-        });
+        if (this.state.isEdit === true) {
+            this.setState({
+                ...this.state,
+                pessoas: [
+                    ...this.state.pessoas.filter(pessoa => pessoa.id !== this.state.idToEdit),
+                    this.state.pessoa
+                ], isEdit: false,
+                pessoa: initialState.pessoa
+            })
+        }
+        else {
+            this.setState({
+                pessoas: [
+                    ...this.state.pessoas,
+                    { id: this.state.lastId + 1, ...this.state.pessoa }
+                ],
+                pessoa: { ...initialState.pessoa },
+                lastId: this.state.lastId + 1
+            });
+        }
     }
 
     buildRows() {
@@ -158,7 +154,7 @@ export default class Pessoa extends PureComponent {
                     #
                 </TableHeader>
             </TableRow>
-        ]; 
+        ];
 
         this.state.pessoas.forEach(row => {
             rows.push(
@@ -198,13 +194,13 @@ export default class Pessoa extends PureComponent {
     }
 
     render() {
-        console.log(this.state)
+        console.log((((new Date()).toLocaleDateString()).toString()))
         return (
             <div style={{ paddingLeft: '20px', paddingTop: '15px' }}>
                 <Row columns="2">
                     <Column>
                         <h1>Cadastro de pessoas</h1>
-                        <Form buttonAlign="left" onSubmit={this.onSubmitPessoa} style={{ borderRightColor: '#191717', borderRight: '2px solid', paddingRight: '20px' }}>
+                        <Form buttonAlign="left" cancelText="Limpar" saveText="Salvar" onSubmit={this.onSubmitPessoa} onCancel={this.onCancelIsEdit} style={{ borderRightColor: '#191717', borderRight: '2px solid', paddingRight: '20px' }}>
                             {this.formPessoa()}
                         </Form>
                     </Column>
@@ -221,13 +217,6 @@ export default class Pessoa extends PureComponent {
                 <Confirm onConfirm={this.deletePerson} onCancel={() => this.onClickDelete('', '')} title="Confirmação" open={this.state.modalDelete} >
                     Realmente quer excluir {this.state.idToDelete} - {this.state.nomeToDelete}
                 </Confirm>
-
-                <Dialog title="Editando pessoa" open={this.state.modalEdit} onCancel={this.onCancelModalEdit}>
-                    <Form buttonAlign="left" onSubmit={this.onEditPessoa} >
-                        {this.formPessoa()}
-                    </Form>
-                </Dialog>
-
                 <Dialog title="Visualizando pessoa" open={this.state.modalView} onCancel={this.onCancelModalView}>
                     <div>
                         {this.formPessoa()}
