@@ -1,8 +1,8 @@
 import React from 'react';
-import Pessoa from './components/Pessoa';
+import Pessoa from './Pessoa';
 
 function App() {
-  return <Pessoa />;
+  return <Pessoa />
 }
 
 export default App;
