@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import Form from 'carbon-react/lib/components/form';
 import Textbox from 'carbon-react/lib/components/textbox';
 import { Row, Column } from 'carbon-react/lib/components/row';
+import { TableRow, TableHeader, Table, TableCell } from 'carbon-react/lib/components/table';
 
 const initialState = {
     pessoa: {
@@ -9,7 +10,10 @@ const initialState = {
         cpf: '',
         idade: '',
         sexo: ''
-    }
+    },
+    pessoas: [
+        { nome: 'Pessoa 1', cpf: '123345', idade: '18', sexo: "Masculino" }
+    ]
 }
 
 export default class Pessoa extends PureComponent {
@@ -19,11 +23,43 @@ export default class Pessoa extends PureComponent {
 
     TrataEnvioDoFormulario = e => {
         e.preventDefault();
-        console.log("A pessoa criada é", this.state.pessoa)
+        this.setState({
+            ...this.state,
+            pessoas: [
+                ...this.state.pessoas,
+                this.state.pessoa
+            ]
+        })
     }
 
     limpaFormulario = () => {
         this.setState(initialState);
+    }
+
+    buildRows = () => {
+        let rows = [
+            <TableRow key='header' as='header'>
+                <TableHeader align='center'>
+                    Nome
+                </TableHeader>
+                <TableHeader align='center'>
+                    CPF
+                </TableHeader>
+                <TableHeader align='center'>
+                    #
+                </TableHeader>
+            </TableRow>
+        ];
+
+        this.state.pessoas.forEach((row, index) => {
+            rows.push(
+                <TableRow key={index} uniqueID={`${index}`}>
+                    <TableCell>{row.nome}</TableCell>
+                    <TableCell>{row.cpf}</TableCell>
+                </TableRow>
+            );
+        });
+        return rows;
     }
 
     render(){
@@ -42,6 +78,9 @@ export default class Pessoa extends PureComponent {
                     </Column>
                     <Column>
                         <h1>Listagem de Pessoas</h1>
+                        <Table shrink={true}>
+                            { this.buildRows() }
+                        </Table>
                     </Column>
                 </Row>
             </div>
