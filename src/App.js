@@ -1,8 +1,8 @@
 import React from 'react';
-import Pessoa from './Pessoa';
+import PessoaContainer from './Pessoa/PessoaContainer';
 
 function App() {
-  return <Pessoa />
+  return <PessoaContainer />
 }
 
 export default App;
