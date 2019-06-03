@@ -9,10 +9,10 @@ import { TableRow, TableHeader, Table, TableCell } from 'carbon-react/lib/compon
 
 const initialState = {
     pessoa: {
-        name: '',
-        height: '',
-        mass: '',
-        hair_color: ''
+        nome: '',
+        cpf: '',
+        cidade: '',
+        sexo: ''
     },
     pessoas: [ ],
     modalDelete: false
@@ -22,8 +22,8 @@ export default class Pessoa extends PureComponent {
     state = initialState;
 
     componentDidMount = () => {
-      this.props.searchPessoa()
-      .then(resp => this.setState({ ...this.state, pessoas: resp.result }))
+      this.props.searchPessoa().then(() => 
+        this.setState({ ...this.state, pessoas: this.props.pessoas }))
     }
 
     handleChange = e => this.setState({ 
@@ -36,14 +36,23 @@ export default class Pessoa extends PureComponent {
 
     TrataEnvioDoFormulario = e => {
         e.preventDefault();
-        this.setState({
-            ...this.state,
-            pessoas: [
-                ...this.state.pessoas,
-                this.state.pessoa
-            ],
-            pessoa: initialState.pessoa
-        })
+        if(this.state.pessoa.id){ //ta editando ou inserindo?
+            this.props.onPut(this.state.pessoa).then((pessoa) => {
+                this.setState({ 
+                    ...this.state, 
+                    pessoa: initialState.pessoa,
+                    pessoas: [ ...this.state.pessoas, pessoa.result ]
+                });
+            })
+        }else{
+            this.props.onPost(this.state.pessoa).then((pessoa) => {
+                this.setState({ 
+                    ...this.state, 
+                    pessoa: initialState.pessoa,
+                    pessoas: [ ...this.state.pessoas, pessoa.result ]
+                });
+            })
+        }
     }
 
     limpaFormulario = () => {
@@ -60,7 +69,7 @@ export default class Pessoa extends PureComponent {
                     Nome
                 </TableHeader>
                 <TableHeader align='center'>
-                    Peso
+                    CPF
                 </TableHeader>
                 <TableHeader align='center'>
                     #
@@ -71,15 +80,15 @@ export default class Pessoa extends PureComponent {
         this.state.pessoas.forEach((row, index) => {
             rows.push(
                 <TableRow key={index} uniqueID={`${index}`}>
-                    <TableCell>{row.name}</TableCell>
-                    <TableCell>{row.height}</TableCell>
+                    <TableCell>{row.nome}</TableCell>
+                    <TableCell>{row.cpf}</TableCell>
                     <TableCell align='center'>
                         <Button style={{ borderRadius: '20px', marginRight: '10px' }} 
-                            onClick={() => this.onClickEdit(row.name)}> 
+                            onClick={() => this.onClickEdit(row.id)}> 
                                 <Icon type="edit" /> 
                         </Button>
                         <Button style={{ borderRadius: '20px' }} 
-                            onClick={() => this.onClickDelete(row.name)}> 
+                            onClick={() => this.onClickDelete(row.id, row.nome)}> 
                             <Icon type="delete" /> 
                         </Button>
                     </TableCell>
@@ -89,53 +98,56 @@ export default class Pessoa extends PureComponent {
         return rows;
     }
   
-    onClickDelete = (name) => {
+    onClickDelete = (id, nome) => {
         this.setState({
             ...this.state,
             modalDelete: !this.state.modalDelete,
-            nameToDelete: name
+            idToDelete: id,
+            nomeToDelete: nome
         })
     }
 
     confirmaExclusao = () => {
-        this.setState({
-            ...this.state,
-            pessoas: this.state.pessoas.filter(
-                pessoa => pessoa.name !== this.state.nameToDelete
-            ), modalDelete: false
+        this.props.onDelete(this.state.idToDelete).then(() => {
+            this.setState({
+                ...this.state,
+                pessoas: this.state.pessoas.filter(pessoa => this.state.idToDelete !== pessoa.id),
+                modalDelete: false
+            })
         })
     }
 
-    onClickEdit = (name) => {
+    onClickEdit = (id) => {
         this.setState({
             ...this.state,
-            pessoa: this.state.pessoas.filter(pessoa => pessoa.name === name)[0],
-            pessoas: this.state.pessoas.filter(pessoa => pessoa.name !== name)
+            pessoa: this.state.pessoas.filter(pessoa => pessoa.id === id)[0],
+            pessoas: this.state.pessoas.filter(pessoa => pessoa.id !== id)
         })
     }
 
     render(){
-        const { name, height, mass, hair_color } = this.state.pessoa;
+        console.log(this.props)
+        const { nome, cpf, cidade, sexo } = this.state.pessoa;
         return(
             <div style={{paddingLeft: '30px', paddingTop: '30px'}}>
                 <Row>
                     <Column>
-                        <h1>Cadastro de Personagens</h1>
+                        <h1>Cadastro de Pessoas</h1>
                         <Form onSubmit={this.TrataEnvioDoFormulario} onCancel={this.limpaFormulario} saveText="Enviar" cancelText="Limpar">
                             <Row columns="2">
                                 <Column>
-                                    <Textbox name="name" value={name} label="Nome" onChange={this.handleChange} />
-                                    <Textbox name="height" value={height} label="Altura" onChange={this.handleChange} />
+                                    <Textbox name="nome" value={nome} label="Nome" onChange={this.handleChange} />
+                                    <Textbox name="cpf" value={cpf} label="CPF" onChange={this.handleChange} />
                                 </Column>
                                 <Column>
-                                    <Textbox name="mass" value={mass} label="Peso" onChange={this.handleChange} />
-                                    <Textbox name="hair_color" value={hair_color} label="Cor do cabelo" onChange={this.handleChange} />
+                                    <Textbox name="cidade" value={cidade} label="Cidade" onChange={this.handleChange} />
+                                    <Textbox name="sexo" value={sexo} label="Sexo" onChange={this.handleChange} />
                                 </Column>
                             </Row>
                         </Form>
                     </Column>
                     <Column>
-                        <h1>Personagens Stars Wars</h1>
+                        <h1>Pessoas cadastradas</h1>
                         <Table shrink={true}>
                             { this.buildRows() }
                         </Table>
@@ -143,7 +155,7 @@ export default class Pessoa extends PureComponent {
                 </Row>
                 
                 <Confirm onConfirm={this.confirmaExclusao} onCancel={() => this.onClickDelete('')} title="Confirmação" open={this.state.modalDelete} >
-                    Realmente quer excluir <b>{this.state.nameToDelete}</b>
+                    Realmente quer excluir <b>a {this.state.nomeToDelete}</b>
                 </Confirm>
             </div>
         )

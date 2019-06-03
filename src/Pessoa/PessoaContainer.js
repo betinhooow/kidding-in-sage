@@ -3,27 +3,32 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import PessoaView from './PessoaView';
-import { searchPessoa, getPessoa } from './PessoaAction';
+import { searchPessoa, deletePessoa, putPessoa, postPessoa } from './PessoaAction';
 
 class PessoaContainer extends PureComponent {
   render() {
     return (
       <PessoaView
         {...this.props}
-        onGet={ this.props.getPessoa }
-        onSearch={ this.props.searchPessoa } />
+        onSearch={ this.props.searchPessoa }
+        onDelete={ this.props.deletePessoa }
+        onPut={ this.props.putPessoa }
+        onPost={ this.props.postPessoa } />
     )
   }
 }
 
 const mapStateToProps = state => ({
-  row: state.Pessoa.row,
-  rows: state.Pessoa.rows,
+  pessoa: state.Pessoa.pessoa,
+  pessoas: state.Pessoa.pessoas,
+  status: state.Pessoa.status
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   searchPessoa,
-  getPessoa
+  deletePessoa,
+  putPessoa,
+  postPessoa
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(PessoaContainer);

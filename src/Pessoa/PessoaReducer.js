@@ -1,62 +1,32 @@
 import {
   SEARCH_REQUEST, SEARCH_SUCCESS, SEARCH_FAILURE, 
-  GET_REQUEST, GET_SUCCESS, GET_FAILURE, 
   POST_REQUEST, POST_SUCCESS, POST_FAILURE, 
   PUT_REQUEST, PUT_SUCCESS, PUT_FAILURE, 
   DELETE_REQUEST, DELETE_SUCCESS, DELETE_FAILURE
 } from '../Pessoa/PessoaAction';
   
   const initialState = {
-    row: {},
-    rows: [],
-    pageable: {
-      activePage: 0,
-      itemsCountPerPage: 10,
-      totalItemsCount: 0,
-      pageRangeDisplayed: 0,
-    },
-    failures: [],
-    messages: [],
-    loading: false,
+    pessoas: [],
   }
   
 const Pessoa = (state=initialState, action) => {
     switch (action.type) {
-      /**
-        * SEARCH
-        */
+
       case SEARCH_REQUEST:
-        return { ...initialState, loading: true }
+        return { 
+          ...initialState, 
+          status: 'Requisitando...'
+        }
       case SEARCH_SUCCESS:
         return {
           ...initialState,
-          rows: action.result,
-          loading: false,
+          pessoas: action.result,
+          status: 'Foi um sucesso'
         }
       case SEARCH_FAILURE:
         return {
           ...state,
-          failures: action.errors,
-          loading: false
-        }
-  
-      /**
-        * GET
-        */
-      case GET_REQUEST:
-        return { ...initialState, loading: true }
-      case GET_SUCCESS:
-        return {
-          ...initialState,
-          row: action.data.results,
-          messages: action.data.messages,
-          loading: false,
-        }
-      case GET_FAILURE:
-        return {
-          ...state,
-          failures: action.errors,
-          loading: false
+          status: 'Deu Erro'
         }
   
       /**
@@ -65,19 +35,17 @@ const Pessoa = (state=initialState, action) => {
       case POST_REQUEST:
         return {
           ...initialState,
-          loading: true
+          status: 'Requisitando...'
         }
       case POST_SUCCESS:
         return {
           ...state,
-          messages: action.data.messages,
-          loading: false,
+          status: 'Foi um sucesso'
         }
       case POST_FAILURE:
         return {
           ...state,
-          failures: action.errors,
-          loading: false
+          status: 'Deu Erro'
         }
   
       /**
@@ -86,22 +54,17 @@ const Pessoa = (state=initialState, action) => {
       case PUT_REQUEST:
         return {
           ...state,
-          messages: initialState.messages,
-          failures: initialState.failures,
-          loading: true
+          status: 'Requisitando...'
         }
       case PUT_SUCCESS:
         return {
           ...state,
-          row: action.data.data,
-          messages: action.data.messages,
-          loading: false,
+          status: 'Foi um sucesso'
         }
       case PUT_FAILURE:
         return {
           ...state,
-          failures: action.errors,
-          loading: false
+          status: 'Deu Erro'
         }
   
       /**
@@ -110,22 +73,17 @@ const Pessoa = (state=initialState, action) => {
       case DELETE_REQUEST:
         return {
           ...initialState,
-          messages: initialState.messages,
-          failures: initialState.failures,
-          loading: true
+          status: 'Requisitando...'
         }
       case DELETE_SUCCESS:
         return {
           ...initialState,
-          row: action.data.data,
-          messages: ["Deletado com sucesso!"],
-          loading: false,
+          status: 'Foi um sucesso'
         }
       case DELETE_FAILURE:
         return {
           ...state,
-          failures: action.errors,
-          loading: false
+          status: 'Deu Erro'
         }
   
       // others
