@@ -143,7 +143,7 @@ export default class Pessoa extends PureComponent {
                 </Row>
                 
                 <Confirm onConfirm={this.confirmaExclusao} onCancel={() => this.onClickDelete('')} title="Confirmação" open={this.state.modalDelete} >
-                    Realmente quer excluir o <b>{this.state.nameToDelete}</b>
+                    Realmente quer excluir <b>{this.state.nameToDelete}</b>
                 </Confirm>
             </div>
         )
