@@ -6,7 +6,7 @@
     "carbon-react": "^7.2.0",
     "core-js": "^2.5.7",
     "i18n-js": "^3.2.2",
-    "node-sass": "^4.12.0",
+    "node-sass": "^7.0.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-redux": "^7.0.3",
